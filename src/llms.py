@@ -1,5 +1,9 @@
+import os
+from dotenv import load_dotenv
 from abc import ABC, abstractmethod
 from openai import OpenAI
+
+load_dotenv()
 
 class LLMAPI(ABC):
     """Abstract class for LLM providers"""
@@ -9,10 +13,12 @@ class LLMAPI(ABC):
         """Takes all text from html and extracts company info"""
         pass
 
+
 class OpenAIAPI(LLMAPI):
     """Implementation using OpenAI API"""
 
-    def __init__(self, api_key: str):
+    def __init__(self):
+        api_key = os.getenv("OPENAI_API_KEY")
         self.client = OpenAI(api_key=api_key)
 
     def get_company_info(self, text: str) -> dict:
@@ -24,4 +30,11 @@ class OpenAIAPI(LLMAPI):
                  {text}"""}
             ]
             )
-        return completion.choices[0].message["content"]
+        return completion.choices[0].message.content
+
+
+def get_llm(provider_name: str) -> LLMAPI:
+    if provider_name == "openai":
+        return OpenAIAPI()
+    else:
+        raise ValueError("Unsupported LLM")
