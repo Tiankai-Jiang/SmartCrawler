@@ -76,7 +76,7 @@ def validate_data(data: Dict) -> Optional[Company]:
     except Exception as e:
         print(f"Unexpected Error: {e}")
 
-def save_to_csv(company: Company, filename="output.csv"):
+def save_to_csv(company: Company, filename: str):
     file_exists = os.path.isfile(filename)
 
     with open(filename, mode="a", newline="", encoding="utf-8") as file:
@@ -88,7 +88,7 @@ def save_to_csv(company: Company, filename="output.csv"):
 
         writer.writerow(company.model_dump())
 
-def process_company(url: str, llm_client):
+def process_company(url: str, llm_client, output_filename="output.csv"):
     print(f"Processing: {url}")
 
     # get raw html contents
@@ -116,7 +116,7 @@ def process_company(url: str, llm_client):
         return
 
     # save to csv
-    save_to_csv(company)
+    save_to_csv(company, output_filename)
     print(f"Successfully processed: {url}")
 
 

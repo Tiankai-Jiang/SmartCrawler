@@ -11,7 +11,7 @@ class TestSystem(unittest.TestCase):
     def setUp(self):
         # Prepare environment
         self.test_url = "https://www.nvfund.com/portfolio/amphista"
-        self.output_file = "output.csv"
+        self.output_file = "test_output.csv"
         self.llm_provider = get_llm('openai')
 
         # Clean up any existing output file
@@ -27,7 +27,7 @@ class TestSystem(unittest.TestCase):
         """
         Test the entire pipeline from fetching HTML to saving data in CSV.
         """
-        process_company(self.test_url, self.llm_provider)
+        process_company(self.test_url, self.llm_provider, self.output_file)
 
         # Verify that output CSV was created
         self.assertTrue(os.path.exists(self.output_file))
