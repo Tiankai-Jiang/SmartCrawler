@@ -1,7 +1,10 @@
 import os
+import openai
+import time
 from dotenv import load_dotenv
 from abc import ABC, abstractmethod
 from openai import OpenAI
+from typing import Optional
 
 load_dotenv()
 
@@ -60,12 +63,23 @@ class OpenAIAPI(LLMAPI):
         self.model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")  # Default to gpt-4o-mini
         self.client = OpenAI(api_key=self.api_key)
 
-    def get_company_info(self, text: str) -> dict:
-        completion = self.client.chat.completions.create(
-            model=self.model,
-            messages=[{"role": "user", "content": f"{PROMPT}\n{text}"}]
-        )
-        return completion.choices[0].message.content
+    def get_company_info(self, text: str) -> Optional[str]:
+        try:
+            completion = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": f"{PROMPT}\n{text}"}]
+            )
+            return completion.choices[0].message.content
+        except openai.RateLimitError:
+            print("Rate limit exceeded.")
+            time.sleep(5) # may cause loop
+            return self.get_company_info(text)
+        except openai.APITimeoutError as e:
+            print(f"Timeout Error: {e}")
+        except openai.AuthenticationError as e:
+            print(f"Authentication Error: {e}")
+        except Exception as e:
+            print(f"General LLM Error: {e}")
 
 
 def get_llm(provider_name: str) -> LLMAPI:
