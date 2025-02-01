@@ -5,6 +5,42 @@ from openai import OpenAI
 
 load_dotenv()
 
+PROMPT = '''
+    You are an expert in information extraction. Your task is to extract company information from the provided webpage content and return the data strictly in the following Python dictionary format:
+
+    {
+        "url": "<company_website_url>",
+        "name": "<company_name>",
+        "description": "<company_description>",
+        "source": "<source_page_url>",
+        "country": "<country>",
+        "city": "<city>",
+        "email": "<email_address>"
+    }
+
+    ### Important Rules:
+    1. **Strictly follow the Python dictionary format shown above.** Do NOT include any explanations, comments, or extra text outside the dictionary.
+    2. **If any information is missing, set the value to `None`** (e.g., `"email": None`).
+    3. **Ensure all string values are enclosed in double quotes ("").**
+    4. The `"source"` field must always contain the source URL from which the data was extracted.
+    5. **Do NOT invent or assume information**—only extract data that is explicitly available in the content.
+
+    ### Example Output:
+    {
+        "url": "https://www.amphista.com",
+        "name": "Amphista Therapeutics",
+        "description": "A biotech company focused on targeted protein degradation.",
+        "source": "https://www.nvfund.com/portfolio/amphista",
+        "country": "United Kingdom",
+        "city": "Cambridge",
+        "email": None
+    }
+
+    Now, extract the information from the following content and return the output strictly in the same Python dictionary format:
+    ---
+'''
+
+
 class LLMAPI(ABC):
     """Abstract class for LLM providers"""
 
@@ -25,10 +61,7 @@ class OpenAIAPI(LLMAPI):
     def get_company_info(self, text: str) -> dict:
         completion = self.client.chat.completions.create(
             model=self.model,
-            messages=[
-                {"role": "user", "content": f"""I will give you some contents from a webscraping result, can you extract company name, locations, company url, company introduction from it?\n\n
-                 {text}"""}
-            ]
+            messages=[{"role": "user", "content": f"{PROMPT}\n{text}"}]
         )
         return completion.choices[0].message.content
 
