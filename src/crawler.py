@@ -3,6 +3,7 @@ import ast
 import csv
 import os
 import pydantic
+import time
 from company import Company
 from bs4 import BeautifulSoup
 from llms import get_llm
@@ -130,6 +131,9 @@ def process_company(url: str, llm_client, output_filename="output.csv"):
 
 
 if __name__ == '__main__':
-    url = "https://www.nvfund.com/portfolio/anokion"
+    urls = ["https://www.nvfund.com/portfolio/anokion"]
+    # url = "https://www.dcvc.com/companies/platfora/"
     llm_client = get_llm('openai')
-    process_company(url, llm_client)
+    for url in urls:
+        process_company(url, llm_client)
+        time.sleep(1)
