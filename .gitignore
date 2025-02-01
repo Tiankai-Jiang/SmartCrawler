@@ -172,3 +172,5 @@ cython_debug/
 
 # Output csv file
 *.csv
+
+.DS_Store

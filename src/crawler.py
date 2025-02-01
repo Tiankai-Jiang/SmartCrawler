@@ -44,7 +44,7 @@ def save_to_csv(company: Company, filename="output.csv"):
 
 if __name__ == '__main__':
     llm = get_llm('openai')
-    url = "https://www.nvfund.com/portfolio/amphista"
+    url = "https://www.nvfund.com/portfolio/anokion"
     clean_content = extract_html(url)
     # print(clean_content)
     # print()
@@ -52,6 +52,7 @@ if __name__ == '__main__':
     try:
         data_dict = ast.literal_eval(llm_output)
     except (SyntaxError, ValueError) as e:
+        print(llm_output)
         print("Error parsing LLM output:", e)
     else:
         data_dict['source'] = url
