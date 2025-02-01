@@ -171,4 +171,4 @@ cython_debug/
 .pypirc
 
 # Output csv file
-.csv
+*.csv
