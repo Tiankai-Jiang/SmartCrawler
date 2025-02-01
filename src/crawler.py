@@ -11,6 +11,16 @@ from urllib3.util.retry import Retry
 from typing import Optional, Dict
 
 def get_html(url: str) -> Optional[str]:
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                    "(KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Connection": "keep-alive",
+        "Upgrade-Insecure-Requests": "1",
+        "Referer": "https://www.google.com/",
+    }
     try:
         adapter = HTTPAdapter(max_retries=Retry(
             total=3,
@@ -22,7 +32,7 @@ def get_html(url: str) -> Optional[str]:
         session.mount("https://", adapter)
         session.mount("http://", adapter)
 
-        response = session.get(url, timeout=10)
+        response = session.get(url, headers=headers,timeout=10)
         response.raise_for_status()  # Raise error for bad status codes (4xx/5xx)
         return response.text
 
@@ -89,7 +99,7 @@ def save_to_csv(company: Company, filename: str):
         writer.writerow(company.model_dump())
 
 def process_company(url: str, llm_client, output_filename="output.csv"):
-    print(f"Processing: {url}")
+    print(f"Processing: {url}", end='\n\n')
 
     # get raw html contents
     raw_html_content = get_html(url)
@@ -98,6 +108,7 @@ def process_company(url: str, llm_client, output_filename="output.csv"):
 
     # extract only texts and urls from html
     clean_content = extract_html(raw_html_content)
+    print(clean_content, end='\n\n')
 
     # LLM extraction
     llm_output = llm_client.get_company_info(clean_content)
