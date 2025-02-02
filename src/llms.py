@@ -5,7 +5,9 @@ from dotenv import load_dotenv
 from abc import ABC, abstractmethod
 from openai import OpenAI
 from typing import Optional
+from logger import get_logger
 
+logger = get_logger(__name__)
 load_dotenv()
 
 PROMPT = '''
@@ -71,15 +73,15 @@ class OpenAIAPI(LLMAPI):
             )
             return completion.choices[0].message.content
         except openai.RateLimitError:
-            print("Rate limit exceeded.")
+            logger.error("Rate limit exceeded.")
             time.sleep(5) # may cause loop
             return self.get_company_info(text)
         except openai.APITimeoutError as e:
-            print(f"Timeout Error: {e}")
+            logger.error(f"Timeout Error: {e}")
         except openai.AuthenticationError as e:
-            print(f"Authentication Error: {e}")
+            logger.error(f"Authentication Error: {e}")
         except Exception as e:
-            print(f"General LLM Error: {e}")
+            logger.error(f"General LLM Error: {e}")
 
 
 def get_llm(provider_name: str) -> LLMAPI:
