@@ -7,6 +7,7 @@ import time
 from company import Company
 from bs4 import BeautifulSoup
 from llms import get_llm
+from urllib.parse import urlparse
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from typing import Optional, Dict
@@ -79,6 +80,30 @@ def parse_llm_output(llm_output: str) -> Optional[Dict]:
         logger.debug(llm_output)
         logger.error(f"Unexpected Error while parsing LLM output: {e}")
 
+def validate_url_email(data_dict: Dict, source_url: str) -> Dict:
+    data_dict['source'] = source_url
+
+    # vc and startup has the same domain, that means llm extracted wrong info
+    # "https://www.dcvc.com/companies/platfora/"
+    parsed_url = urlparse(source_url)
+    if parsed_url.netloc == urlparse(data_dict['url']).netloc:
+        logger.warning(f'No valid url for company from {source_url}')
+        data_dict['url'] = None
+
+    # vc and startup email has the same domain, that means llm extracted wrong info
+    # "https://btn.vc/portfolio/hivewealth-2/"
+    # "https://www.preludeventures.com/portfolio/atom-computing"
+    if data_dict['email'] is not None:
+        source_domain = parsed_url.netloc or parsed_url.path # no http
+        if source_domain.startswith('www.'): # remove www. to compare with email domain
+            source_domain = source_domain[4:]
+        good_emails = [x for x in data_dict['email'].split(',') if x.split('@')[-1].strip() != source_domain]
+        if good_emails:
+            data_dict['email'] = ','.join(good_emails)
+        else:
+            data_dict['email'] = None
+
+
 def validate_data(data: Dict) -> Optional[Company]:
     try:
         company = Company(**data)
@@ -121,7 +146,9 @@ def process_company(url: str, llm_client, output_filename="output.csv"):
     data_dict = parse_llm_output(llm_output)
     if not data_dict:
         return
-    data_dict['source'] = url
+
+    # check on source url, startup url and startup email
+    validate_url_email(data_dict, url)
 
     # pydantic validation
     company = validate_data(data_dict)
@@ -135,7 +162,6 @@ def process_company(url: str, llm_client, output_filename="output.csv"):
 
 if __name__ == '__main__':
     urls = ["https://www.nvfund.com/portfolio/anokion"]
-    # url = "https://www.dcvc.com/companies/platfora/"
     llm_client = get_llm('openai')
     for url in urls:
         process_company(url, llm_client)
