@@ -49,7 +49,7 @@ def get_html(url: str) -> Optional[str]:
         logger.error(f"Unexpected Error: {err} for URL: {url}")
 
 def extract_html(input_html: str) -> str:
-    soup = BeautifulSoup(input_html, "html.parser")
+    soup = BeautifulSoup(input_html, "html.parser") # lxml, html5lib
 
     # Remove unnecessary tags
     for tag in soup(["script", "style", "noscript", "meta", "header", "footer"]):

@@ -68,6 +68,9 @@ def extract_internal_links(portfolio_url):
         return []
 
 def process_portfolio(portfolio_url):
+    """
+    returns {'https:vc1.com/portfolio/': ['https:vc1.com/portfolio/comp1', 'https:vc1.com/portfolio/comp2'], ...}
+    """
     internal_links = extract_internal_links(portfolio_url)
     return {portfolio_url: internal_links} if len(internal_links) > 1 else None
 
@@ -76,17 +79,16 @@ def parallel_crawl(portfolio_urls, max_workers=20):
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         # Submit all portfolio URLs to be processed in parallel
-        future_to_url = {executor.submit(process_portfolio, url): url for url in portfolio_urls}
+        futures = [executor.submit(process_portfolio, url) for url in portfolio_urls]
 
-        # As each thread completes, process the result
-        for future in as_completed(future_to_url):
-            url = future_to_url[future]
+        # Process results as they complete
+        for future in as_completed(futures):
             try:
                 data = future.result()
                 if data:
                     results.update(data)
             except Exception as e:
-                print(f"Error processing {url}: {e}")
+                print(f"Error processing: {e}")
 
     return results
 

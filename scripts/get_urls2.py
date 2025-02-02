@@ -44,7 +44,7 @@ while page<5:
         break
     all_company_urls.extend(urls)
     page += 1
-    time.sleep(1)  # Be polite and avoid overloading the server
+    time.sleep(1)
 
 # Remove duplicates from the final list
 all_company_urls = list(set(all_company_urls))

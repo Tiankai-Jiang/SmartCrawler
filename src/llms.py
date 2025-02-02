@@ -52,7 +52,7 @@ class LLMAPI(ABC):
     """Abstract class for LLM providers"""
 
     @abstractmethod
-    def get_company_info(self, text: str) -> dict:
+    def get_company_info(self, text: str) -> Optional[str]:
         """Takes all text from html and extracts company info"""
         pass
 

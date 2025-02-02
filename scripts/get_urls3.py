@@ -2,7 +2,6 @@ import requests
 from bs4 import BeautifulSoup
 import time
 
-# Function to get company details from the company page
 def get_company_details(company_url):
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
@@ -33,7 +32,7 @@ for url in all_company_urls:
     print(f"Scraping company details from {url}...")
     name, website = get_company_details(url)
     company_details.append({"Company Name": name, "Company URL": website})
-    time.sleep(1)  # Be polite and avoid overloading the server
+    time.sleep(1)
 
 # Save the company details to a file
 with open("company_details_uk.csv", "w") as file:
