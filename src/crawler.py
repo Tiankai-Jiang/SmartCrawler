@@ -66,9 +66,7 @@ def extract_html(input_html: str) -> str:
         if href and link_text:
             links.append(f"{link_text}: {href}")
 
-    cleaned_content = f"Texts:\n{general_text}\n\nHyperlinks:\n" + "\n".join(links)
-
-    return cleaned_content
+    return f"Texts:\n{general_text}\n\nHyperlinks:\n" + "\n".join(links)
 
 def parse_llm_output(llm_output: str) -> Optional[Dict]:
     try:
