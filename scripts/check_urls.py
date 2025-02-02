@@ -23,7 +23,7 @@ def process_company(company, url):
 
 # Read URLs from file
 res = []
-with open('vcs_urls.csv', 'r') as file:
+with open('vcs_urls_all.csv', 'r') as file:
     lines = [line.strip() for line in file if not line.startswith('company')]
 
 # Multithreading with ThreadPoolExecutor
@@ -36,6 +36,6 @@ with ThreadPoolExecutor(max_workers=20) as executor:
             print(result.split(',')[-1])
 
 # Saving the results
-with open('vcs_urls_portfolio.csv', 'w') as out_file:
+with open('vcs_urls_all_portfolio.csv', 'w') as out_file:
     for entry in res:
         out_file.write(f"{entry}\n")

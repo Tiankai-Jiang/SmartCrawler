@@ -21,7 +21,7 @@ for item in soup.find_all('div', class_='list-card'):
             website += '/'
         companies.append((name, website))
 
-with open("vcs_urls.csv", "w") as f:
+with open("company_details_vcsheet.csv", "w") as f:
     f.write("company,url\n")
     for company in companies:
         f.write(f"{company[0]},{company[1]}\n")
