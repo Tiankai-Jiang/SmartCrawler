@@ -33,6 +33,7 @@ OPENAI_MODEL=<openai-model-name> # e.g., gpt-4o-mini
 Run the application:
 
 ```
+cd src
 python crawler.py
 ```
 
