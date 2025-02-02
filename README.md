@@ -41,3 +41,4 @@ Add urls to the list in crawler.py as you wish.
 
 ## Results
 
+Tested on 254 **unique** VC websites, the scraper successfully generated 162 results. The list of websites can be found in the urls variable within crawler.py. Since these VC websites were initially gathered through web scraping, many were not suitable for testing from the start. Examples include: http://www.socialstarts.com/portfolio/everymove.org, http://www.valorcapitalgroup.com/portfolio/companies, http://www.techsquareventures.com/portfolio/privacy-policy, http://www.differential.vc/portfolio/category/Acquired, https://playfair.vc/companies/approach.php. By refining the list and removing such ineligible URLs in future iterations, the results are expected to improve.
